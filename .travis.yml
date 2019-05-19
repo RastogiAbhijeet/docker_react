@@ -1,10 +1,25 @@
 sudo: required
-services: 
+services:
   - docker
 
 before_install:
   - docker build -f Dockerfile.dev -t rastogiabhijeet/docker_react .
 
 script:
-  -  docker run rastogiabhijeet/docker_react npm run test -- --coverage
-  
+  - docker run rastogiabhijeet/docker_react npm run test -- --coverage
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "docker_react"
+  env: "DockerReact-env"
+  bucket_name: "elasticbeanstalk-us-east-1-416901336476"
+  bucket_path: "docker_react"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
+  # first time s3 bucket might not have the app .. untill you deploy something :)
+  # travis comes build in with some providers like aws, azure, do, gcp
+# http://dockerreact-env.kmkpzydhce.us-east-1.elasticbeanstalk.com/
